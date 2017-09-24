@@ -1,4 +1,4 @@
-# Customer
+# Customer AOI
 Customers system - Interview challenge
 
 Customers system was build as an interview process challenge. The system is an exemplar of the functions that are required in order to implement minimum viable product.
@@ -99,6 +99,8 @@ One way synchronization has been implemented using Anypoint Studio *POLL* and *H
 In order to implement simplistic - one way synchronization with a master system a supporting system has been developed. 
 
 The "Master System" has only **GET** method available and provides a list of customers in JSON format ([Master system output](http://mastersystem.cloudhub.io/api/clients))
+
+The two systems have slight differences in the data models and the synchronization was achieved using **DataWeave** to transform the array of object into the format that is required by the database. Because the differences are minor an alternative to complete this would be using database query manipulations. 
 
 
 
