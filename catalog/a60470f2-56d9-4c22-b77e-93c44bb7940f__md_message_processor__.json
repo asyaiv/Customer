@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {}
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "zpoint"
+        }
+    },
+    "id": "a60470f2-56d9-4c22-b77e-93c44bb7940f",
+    "version": "5.2.0.0"
+}

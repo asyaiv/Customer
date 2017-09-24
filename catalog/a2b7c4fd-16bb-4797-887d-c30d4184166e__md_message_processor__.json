@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "masterSample"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "zpoint"
+        }
+    },
+    "id": "a2b7c4fd-16bb-4797-887d-c30d4184166e",
+    "version": "5.2.0.0"
+}

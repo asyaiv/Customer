@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:customerB.xml"/>
+    </spring:beans>
+    <munit:test name="new-test-suite-oneDirection-syncTest" description="Test">
+        <flow-ref name="oneDirection-sync" doc:name="Flow-ref to oneDirection-sync"/>
+    </munit:test>
+    <munit:test name="new-test-suite-Json-Tranform-Sub_FlowTest" description="Test">
+        <flow-ref name="Json-Tranform-Sub_Flow" doc:name="Flow-ref to Json-Tranform-Sub_Flow"/>
+    </munit:test>
+    <munit:test name="new-test-suite-customerB-mainTest" description="Test">
+        <flow-ref name="customerB-main" doc:name="Flow-ref to customerB-main"/>
+    </munit:test>
+    <munit:test name="new-test-suite-customerB-consoleTest" description="Test">
+        <flow-ref name="customerB-console" doc:name="Flow-ref to customerB-console"/>
+    </munit:test>
+    <munit:test name="new-test-suite-delete:/customers:customerB-configTest" description="Test">
+        <flow-ref name="delete:/customers:customerB-config" doc:name="Flow-ref to delete:/customers:customerB-config"/>
+    </munit:test>
+    <munit:test name="new-test-suite-patch:/customers:customerB-configTest" description="Test">
+        <flow-ref name="patch:/customers:customerB-config" doc:name="Flow-ref to patch:/customers:customerB-config"/>
+    </munit:test>
+    <munit:test name="new-test-suite-get:/customers:customerB-configTest" description="Test">
+        <flow-ref name="get:/customers:customerB-config" doc:name="Flow-ref to get:/customers:customerB-config"/>
+    </munit:test>
+    <munit:test name="new-test-suite-get:/customers/{custID}:customerB-configTest" description="Test">
+        <flow-ref name="get:/customers/{custID}:customerB-config" doc:name="Flow-ref to get:/customers/{custID}:customerB-config"/>
+    </munit:test>
+    <munit:test name="new-test-suite-post:/customers:customerB-configTest" description="Test">
+        <flow-ref name="post:/customers:customerB-config" doc:name="Flow-ref to post:/customers:customerB-config"/>
+    </munit:test>
+</mule>

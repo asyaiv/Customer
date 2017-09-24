@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:listener-config name="customerB-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="customerB-config" raml="customerB.raml" consoleEnabled="false" doc:name="Router"/>
+    <db:mysql-config name="MySQL_Configuration" host="zpoint.ce5kpq90y1sw.ap-southeast-2.rds.amazonaws.com" port="3306" user="asyaiv" password="Asdf1234" database="zpoint" doc:name="MySQL Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration"  host="mastersystem.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="mastersystem.raml"/>
+    </http:request-config>
+    <flow name="oneDirection-sync" initialState="started">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="15" timeUnit="SECONDS"/>
+            <http:request config-ref="HTTP_Request_Configuration" path="/clients" method="GET" doc:name="HTTP"/>
+        </poll>
+        <flow-ref name="Json-Tranform-Sub_Flow" doc:name="Json-Tranform-Sub_Flow"/>
+        <db:insert config-ref="MySQL_Configuration" bulkMode="true" doc:name="insertDatabase">
+            <db:parameterized-query><![CDATA[INSERT INTO zpoint (custID, firstName, lastName, street, city, postCode, updated)VALUES(
+#[message.payload.custID],
+#[message.payload.firstName],
+#[message.payload.lastName],
+#[message.payload.street],
+#[message.payload.city],
+#[message.payload.postCode],
+#[message.payload.updated]) 
+ON DUPLICATE KEY UPDATE 
+custID = #[message.payload.custID],
+firstName = #[message.payload.firstName],
+lastName = #[message.payload.lastName],
+street = #[message.payload.street],
+city = #[message.payload.city],
+postCode = #[message.payload.postCode],
+updated = #[message.payload.updated] ;]]></db:parameterized-query>
+        </db:insert>
+        <logger message="Database has been updated from the master database." level="INFO" doc:name="Logger"/>
+    </flow>
+    <sub-flow name="Json-Tranform-Sub_Flow">
+        <json:json-to-object-transformer returnClass="customerb.CustomerDetails[]" doc:name="JSON to ListOfObjects" metadata:id="87c6fb99-6297-4397-aeca-cb3bcbc251b3"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="359bb215-373b-4ef5-8c14-5291904d1e76">
+            <dw:input-payload doc:sample="sample_data\list_Clientdetails.dwl" mimeType="application/java"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	custID: payload01.cid,
+	firstName: payload01.fname,
+	lastName: payload01.lname,
+	street: payload01.streetnumber ++ " " ++ payload01.streetname,
+	city: payload01.city,
+	postCode: payload01.zipcode,
+	updated: payload01.timestamp
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
+
+    <flow name="customerB-main">
+        <http:listener config-ref="customerB-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="customerB-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="customerB-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="customerB-console">
+        <http:listener config-ref="customerB-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="customerB-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="delete:/customers:customerB-config">
+        <db:delete config-ref="MySQL_Configuration" doc:name="delete">
+            <db:parameterized-query><![CDATA[delete from zpoint where custId = #[message.inboundProperties.'http.query.params'.custID];]]></db:parameterized-query>
+        </db:delete>
+
+    </flow>
+    <flow name="patch:/customers:customerB-config">
+        <db:update config-ref="MySQL_Configuration" doc:name="update">
+            <db:parameterized-query><![CDATA[update zpoint 
+set city = #[message.inboundProperties.'http.query.params'.city],
+	street = #[message.inboundProperties.'http.query.params'.street],
+	postcode = #[message.inboundProperties.'http.query.params'.postCode]
+where custId = #[message.inboundProperties.'http.query.params'.custID];]]></db:parameterized-query>
+        </db:update>
+
+    </flow>
+    <flow name="get:/customers:customerB-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="select">
+            <db:parameterized-query><![CDATA[select * from zpoint;]]></db:parameterized-query>
+        </db:select>
+        <dw:transform-message doc:name="Transform Message" metadata:id="86733734-fd67-44bf-9b6f-5b32fe72285d">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01, indexOfPayload01) ->{
+	custID: payload01.custID,
+	firstName: payload01.firstName,
+	lastName: payload01.lastName,
+	address: {
+		street: payload01.street,
+		city: payload01.city,
+		postCode: payload01.postCode
+	}
+})]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="get:/customers/{custID}:customerB-config">
+        <db:select config-ref="MySQL_Configuration" doc:name="selectWhereCustID">
+            <db:parameterized-query><![CDATA[select * from zpoint where custId = #[flowVars.CustId]]]></db:parameterized-query>
+        </db:select>
+        <dw:transform-message doc:name="Transform Message" metadata:id="32c8c4f0-6187-4327-a2c8-0816c726b63b">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01, indexOfPayload01) ->{
+	custID: payload01.custID,
+	firstName: payload01.firstName,
+	lastName: payload01.lastName,
+	address: {
+		street: payload01.street,
+		city: payload01.city,
+		postCode: payload01.postCode
+	}
+})]]></dw:set-payload>
+        </dw:transform-message>
+
+    </flow>
+    <flow name="post:/customers:customerB-config">
+        <dw:transform-message doc:name="Transform Message" metadata:id="6bb9e503-9c3c-4ee0-b116-e92e8a1f71b4">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	custID: payload.custID,
+	firstName: payload.firstName,
+	lastName: payload.lastName,
+	street: payload.address.street,
+	city: payload.address.city,
+	postCode: payload.address.postCode
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <db:insert config-ref="MySQL_Configuration" doc:name="insert">
+            <db:parameterized-query><![CDATA[INSERT INTO zpoint (custID, firstName, lastName, street, city, postCode)
+VALUES(
+#[payload.custID],
+#[payload.firstName],
+#[payload.lastName],
+#[payload.street],
+#[payload.city],
+#[payload.postCode]);]]></db:parameterized-query>
+        </db:insert>
+
+    </flow>
+    <apikit:mapping-exception-strategy name="customerB-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>
