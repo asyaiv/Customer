@@ -1,0 +1,30 @@
+#%RAML 1.0
+baseUri: http://mastersystem.cloudhub.io/api
+title: MasterSystem
+
+version: v1.1
+mediaType: application/json
+
+/clients:
+  get: 
+    description: Retrieves all clients from the Master system.
+    responses: 
+      200:
+        body:
+          application/json:
+            example: 
+              description: "An example customer:"
+              displayName: Customer
+              value: {"cid": "111",
+                "fname": "Maxim",
+                "lname": "Gorky",
+                "streetnumber": "111",
+                "streetname": "Lenina Sq.",
+                "city": "Yakutsk",
+                "zipcode": "6677",
+                "timestamp": "2015-12-30 00:22:55"}
+      500:
+        body: 
+          application/json:
+            example:
+              {"message" : "Under construction"}
