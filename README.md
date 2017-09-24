@@ -111,7 +111,7 @@ The two systems have slight differences in the data models and the synchronizati
 
 Synchronization presented in the Customers system is overly simplistic and only aims to display minimal functionality. The records are updated in the client system from the master system and do not consider time stamps in this version. Usually enterprise solutions would employ more elegant mechanisms to ensure bi-directional sync, for example like watermarks and locks). However various implementations exist depending on requirements and other limitations.
 ___
-### Future Release Notes ###
+### Future Release - Wish List ###
 
 ##### Error Handling #####
 
