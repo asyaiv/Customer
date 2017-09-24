@@ -1,5 +1,5 @@
-# Customer AOI
-Customers system - Interview challenge
+# Customers System API
+Customers System - Interview challenge
 
 Customers system was build as an interview process challenge. The system is an exemplar of the functions that are required in order to implement minimum viable product.
 
