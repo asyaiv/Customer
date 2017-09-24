@@ -1,11 +1,9 @@
 # Customer
 Customers system - Interview challenge
-___
-## Overview ##
 
 Customers system was build as an interview process challenge. The system is an exemplar of the functions that are required in order to implement minimum viable product.
 
-**PLEASE READ BEFORE FIRST RUN:**
+**PLEASE READ BEFORE THE FIRST RUN:**
 
 To witness synchronization in action copy and save the output of **GET** immediately after the first run. In 3 minutes after the first load the system will perform synchronization during which new records will be added and customer custID = 666 address will update. 
 
