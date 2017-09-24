@@ -108,12 +108,18 @@ The two systems have slight differences in the data models and the synchronizati
 
 Synchronization presented in the Customers system is overly simplistic and only aims to display minimal functionality. The records are updated in the client system from the master system and do not consider time stamps in this version. Usually enterprise solutions would employ more elegant mechanisms to ensure bi-directional sync, for example like watermarks and locks). However various implementations exist depending on requirements and other limitations.
 ___
-### Version 2 Considerations ###
+### Future Release Notes ###
 
 ##### Error Handling #####
 
 Currently Error Handling is limited and only implemented though HTTP status codes. In general an error handling strategy would employ at least two approaches: exception handling and input validation not only to improve user experience but to protect the system from malicious inputs. 
 
+##### End-to-End Testing #####
+
+Current version does not provide unit tests. A testing strategy needs to be developed and delivered.
+
 ##### Authorization #####
 
 This version does not implement any form of authorization. In the future version a simple authorization could be implemented using OAuth2 for example using GitHub authorization.
+
+
