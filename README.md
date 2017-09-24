@@ -1,4 +1,4 @@
-# Customers System API
+# Customers System API #
 Customers System - Interview challenge
 
 Customers system was build as an interview process challenge. The system is an exemplar of the functions that are required in order to implement minimum viable product.
@@ -65,6 +65,8 @@ The MuleSoft deliverable will be assessed against the following implementation c
 ___
 ## Implementation Details ##
 
+The approach to developing the system was rather exploratory, some design decisions were driven by desire to learn and experiment rather than provide the most optimal production-ready solution. 
+
 #### MySQL Database table ####
 - **custID** - Unique Identifier (string)
 - **firstName** - Fist Name (string)
@@ -83,7 +85,7 @@ ___
 - **DELETE** Deletes a customer based on CustID passed via *QUERY-PARAMETERS*
  
 ##### Solution considerations: #####
-The four methods use various input delivery mechanisms to demonstrate various use of HTTP parameters. However a better practice is a uniform strategy for data input. The strategy should consider system requirements and future use.  
+The four methods use various input delivery mechanisms to demonstrate various use of HTTP parameters. However a better practice is a uniform strategy for data input. The strategy should consider system requirements and future use.While designing API it is recommended to declare media types, effectively use description fields and examples.   
 
 #### Status Codes ####
 - **200** - Successful request (OK)
