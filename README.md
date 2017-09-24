@@ -1,6 +1,6 @@
 # Customer
 Customers system - Interview challenge
-
+___
 ## Overview ##
 
 Customers system was build as an interview process challenge. The system is an exemplar of the functions that are required in order to implement minimum viable product.
@@ -9,7 +9,8 @@ Customers system was build as an interview process challenge. The system is an e
 
 To witness synchronization in action copy and save the output of **GET** immediately after the first run. In 3 minutes after the first load the system will perform synchronization during which new records will be added and customer custID = 666 address will update. 
 
-
+___
+___
 ## System Requirements ##
 
 #### Resource: ####
@@ -34,7 +35,7 @@ To witness synchronization in action copy and save the output of **GET** immedia
 #### Use-cases: ####
 1. Periodic sync of customers using the API.
 2. Mobile application retrieval and update to customer's details.
-
+___
 ## Assessment Criteria ##
 
 Two main deliverables will be assessed primarily on the following criteria. 
@@ -50,7 +51,7 @@ The MuleSoft deliverable will be assessed against the following implementation c
 - Consideration of error handling
 - Inclusion of some unit tests 
 - Use of DataWeave
-
+___
 ## Implementation Details ##
 
 #### MySQL Database table ####
@@ -93,8 +94,8 @@ The "Master System" has only **GET** method available and provides a list of cus
 ##### Solution considerations: ##### 
 
 Synchronization presented in the Customers system is overly simplistic and only aims to display minimal functionality. The records are updated in the client system from the master system and do not consider time stamps in this version. Usually enterprise solutions would employ more elegant mechanisms to ensure bi-directional sync, for example like watermarks and locks). However various implementations exist depending on requirements and other limitations.
-
-#### Version 2 Considerations ####
+___
+### Version 2 Considerations ###
 
 ##### Error Handling #####
 
