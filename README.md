@@ -19,9 +19,7 @@ To witness synchronization in action copy and save the output of **GET** immedia
 
 [Implementation Details](https://github.com/asyaiv/Customer#implementation-details)
 
-[Version 2 Considerations](https://github.com/asyaiv/Customer#version-2-considerations)
-
-
+[Future Release - Wish List](https://github.com/asyaiv/Customer#future-release---wish-list)
 ___
 ___
 ## System Requirements ##
